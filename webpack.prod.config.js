@@ -1,50 +1,20 @@
-const path = require('path')
-const webpack = require('webpack')
+var config = require('./webpack.config.js');
+var webpack = require('webpack');
 
-module.exports = {
-  devtool: 'source-map',
+config.plugins.push(
+  new webpack.DefinePlugin({
+    "process.env": {
+      "NODE_ENV": JSON.stringify("production")
+    }
+  })
+);
 
-  entry: [
-    './src/index'
-  ],
+config.plugins.push(
+  new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
+    }
+  })
+);
 
-  output: {
-    path: __dirname,
-    publicPath: '/public/'
-    filename: 'bundle.js',
-  },
-
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
-
-  plugins: [
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    })
-  ],
-
-  module: {
-    loaders: [
-      { test: /\.js?$/,
-        loader: 'babel',
-        exclude: /node_modules/ },
-      { test: /\.scss?$/,
-        loader: 'style!css!sass',
-        include: path.join(__dirname, 'src', 'styles') },
-      { test: /\.png$/,
-        loader: 'file' },
-      { test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-        loader: 'file'}
-    ]
-  }
-}
+module.exports = config;
